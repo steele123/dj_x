@@ -38,15 +38,30 @@ public class DiscordBot(
     private async Task ClientOnComponentInteractionCreated(DiscordClient sender,
         ComponentInteractionCreateEventArgs args)
     {
-        var scope = serviceScopeFactory.CreateScope();
-        var commands = scope.ServiceProvider.GetRequiredService<IAudioService>();
+        //var scope = serviceScopeFactory.CreateScope();
         var id = args.Id!;
 
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(args.Guild.Id);
         if (player is null)
         {
             await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder().WithContent("No player found"));
+                new DiscordInteractionResponseBuilder().WithContent("No player found").AsEphemeral());
+            return;
+        }
+
+        var member = args.Guild.Members.GetValueOrDefault(args.User.Id);
+        if (member is null)
+        {
+            await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("No member found").AsEphemeral());
+            return;
+        }
+
+        var vc = member.VoiceState?.Channel;
+        if (vc?.Id != player.VoiceChannelId)
+        {
+            await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("You are not in the same voice channel as the bot").AsEphemeral());
             return;
         }
 
@@ -82,7 +97,7 @@ public class DiscordBot(
                     : TrackRepeatMode.None;
 
                 await player.TriggerMessageUpdate();
-                
+
                 break;
             }
         }
