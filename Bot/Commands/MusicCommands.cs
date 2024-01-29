@@ -215,12 +215,13 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         else
         {
             sb.AppendLine("**Queue:**");
-            foreach (var queueItem in queue)
+            for (var i = 0; i < queue.Count; i++)
             {
+                var queueItem = queue[i];
                 var track = queueItem.Track;
                 if (track is null) continue;
 
-                sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
+                sb.AppendLine($"{i}. {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
         }
 
