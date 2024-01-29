@@ -37,7 +37,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
             return;
         }
 
-        await EmbedMessage.ModifyAsync(CreateMessage(CurrentTrack!, RepeatMode != TrackRepeatMode.None, IsPaused));
+        await TriggerMessageUpdate();
     }
 
     public override async ValueTask ResumeAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -49,7 +49,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
             return;
         }
 
-        await EmbedMessage.ModifyAsync(CreateMessage(CurrentTrack!, RepeatMode != TrackRepeatMode.None, IsPaused));
+        await TriggerMessageUpdate();
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         {
             var embed = new DiscordEmbedBuilder()
                 .WithDescription(
-                    "That's a wrap, you've reached the end of the queue bro.\n\n`/play` to add more songs.")
+                    "That's a wrap, you've reached the end of the queue.\n\n`/play` to add more songs.")
                 .WithBranding();
 
             var msg = new DiscordMessageBuilder()

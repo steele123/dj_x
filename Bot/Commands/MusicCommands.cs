@@ -39,7 +39,9 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var opts = new EmbedDisplayPlayerOptions
         {
             SelfDeaf = true,
-            HistoryCapacity = 30
+            HistoryCapacity = 30,
+            DisconnectOnDestroy = true,
+            ClearQueueOnStop = true
         };
 
         var vc = ctx.Member?.VoiceState?.Channel;
