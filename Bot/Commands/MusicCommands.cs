@@ -4,6 +4,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Lavalink4NET;
 using Lavalink4NET.Extensions;
+using Lavalink4NET.Filters;
 using Lavalink4NET.Lyrics;
 using Lavalink4NET.Players;
 using Lavalink4NET.Players.Queued;
@@ -17,14 +18,12 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("status", "Checks whether the bot is online and able to play music")]
     public async Task Status(InteractionContext ctx)
     {
-        var player = await audioService.Players.GetPlayerAsync(ctx.Guild.Id);
-        if (player is null)
-        {
-            await ctx.CreateResponseAsync("bot: ✅\nlavalink: ❌");
-            return;
-        }
+        await ctx.DeferAsync();
 
-        await ctx.CreateResponseAsync("bot: ✅\nlavalink: ✅");
+        var embed = new DiscordEmbedBuilder()
+            .WithBranding().WithDescription("DJ X is online and ready to play some music!");
+        
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
     }
 
     [SlashCommand("play", "Plays a song")]
