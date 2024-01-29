@@ -8,7 +8,7 @@ using Lavalink4NET.Tracks;
 namespace Bot;
 
 /// <summary>
-/// Plays songs and sends an embed to the specified text channel.
+///     Plays songs and sends an embed to the specified text channel.
 /// </summary>
 public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDisplayPlayerOptions> properties)
     : QueuedLavalinkPlayer(properties)
@@ -16,44 +16,35 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
     public DiscordMessage? EmbedMessage { get; set; }
 
     protected override async ValueTask NotifyTrackStartedAsync(ITrackQueueItem queueItem,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = new())
     {
         await base.NotifyTrackStartedAsync(queueItem, cancellationToken);
 
-        if (EmbedMessage is null)
-        {
-            return;
-        }
+        if (EmbedMessage is null) return;
 
         await EmbedMessage.ModifyAsync(CreateMessage(queueItem.Track!, RepeatMode != TrackRepeatMode.None, IsPaused));
     }
 
-    public override async ValueTask PauseAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override async ValueTask PauseAsync(CancellationToken cancellationToken = new())
     {
         await base.PauseAsync(cancellationToken);
 
-        if (EmbedMessage is null)
-        {
-            return;
-        }
+        if (EmbedMessage is null) return;
 
         await TriggerMessageUpdate();
     }
 
-    public override async ValueTask ResumeAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override async ValueTask ResumeAsync(CancellationToken cancellationToken = new())
     {
         await base.ResumeAsync(cancellationToken);
 
-        if (EmbedMessage is null)
-        {
-            return;
-        }
+        if (EmbedMessage is null) return;
 
         await TriggerMessageUpdate();
     }
 
     /// <summary>
-    /// We use this to trigger an update to the embed message.
+    ///     We use this to trigger an update to the embed message.
     /// </summary>
     public async Task TriggerMessageUpdate()
     {
@@ -64,10 +55,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
     {
         await base.StopAsync(cancellationToken);
 
-        if (EmbedMessage is null)
-        {
-            return;
-        }
+        if (EmbedMessage is null) return;
 
         try
         {
@@ -109,14 +97,12 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 .AddField("Shuffle Mode", Shuffle ? "On" : "Off", true)
                 .WithBranding()
             )
-            .AddComponents(new DiscordComponent[]
-            {
-                new DiscordLinkButtonComponent(track.Uri?.ToString(), "Link"),
+            .AddComponents(new DiscordLinkButtonComponent(track.Uri?.ToString(), "Link"),
                 new DiscordButtonComponent(ButtonStyle.Success, "toggle_playback", paused ? "Play" : "Pause"),
                 new DiscordButtonComponent(ButtonStyle.Danger, "skip", "Skip"),
                 new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat", repeat ? "Repeat Off" : "Repeat On"),
-                new DiscordButtonComponent(ButtonStyle.Primary, "toggle_shuffle", Shuffle ? "Shuffle Off" : "Shuffle On")
-            });
+                new DiscordButtonComponent(ButtonStyle.Primary, "toggle_shuffle",
+                    Shuffle ? "Shuffle Off" : "Shuffle On"));
     }
 }
 

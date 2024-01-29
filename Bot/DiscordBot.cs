@@ -61,7 +61,8 @@ public class DiscordBot(
         if (vc?.Id != player.VoiceChannelId)
         {
             await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder().WithContent("You are not in the same voice channel as the bot").AsEphemeral());
+                new DiscordInteractionResponseBuilder().WithContent("You are not in the same voice channel as the bot")
+                    .AsEphemeral());
             return;
         }
 
@@ -70,13 +71,9 @@ public class DiscordBot(
             case "toggle_playback":
             {
                 if (player.IsPaused)
-                {
                     await player.ResumeAsync();
-                }
                 else
-                {
                     await player.PauseAsync();
-                }
 
                 break;
             }

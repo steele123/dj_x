@@ -5,7 +5,7 @@ namespace Bot;
 public static class Constants
 {
     public const string BotName = "DJ X";
-    
+
     public const string BotVersion = "1.0.0";
 
     public const string ImageUrl = "https://x.stele.site/img/ljdY8W.png";

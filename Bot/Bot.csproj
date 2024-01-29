@@ -9,17 +9,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DSharpPlus" Version="4.4.6" />
-        <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.6" />
-        <PackageReference Include="Lavalink4NET" Version="4.0.9" />
-        <PackageReference Include="Lavalink4NET.DSharpPlus" Version="4.0.9" />
-        <PackageReference Include="Lavalink4NET.Lyrics" Version="4.0.9" />
+        <PackageReference Include="DSharpPlus" Version="4.4.6"/>
+        <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.6"/>
+        <PackageReference Include="Lavalink4NET" Version="4.0.9"/>
+        <PackageReference Include="Lavalink4NET.DSharpPlus" Version="4.0.9"/>
+        <PackageReference Include="Lavalink4NET.Lyrics" Version="4.0.9"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 </Project>

@@ -1,10 +1,8 @@
 ﻿using System.Text;
-using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Lavalink4NET;
 using Lavalink4NET.Extensions;
-using Lavalink4NET.Filters;
 using Lavalink4NET.Lyrics;
 using Lavalink4NET.Players;
 using Lavalink4NET.Players.Queued;
@@ -22,7 +20,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         var embed = new DiscordEmbedBuilder()
             .WithBranding().WithDescription("DJ X is online and ready to play some music!");
-        
+
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
     }
 
@@ -196,10 +194,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             .WithColor(Constants.Color);
 
         var sb = new StringBuilder();
-        if (currentTrack is not null)
-        {
-            sb.AppendLine($"**Now Playing:** {currentTrack.Title} - {currentTrack.Author}\n");
-        }
+        if (currentTrack is not null) sb.AppendLine($"**Now Playing:** {currentTrack.Title} - {currentTrack.Author}\n");
 
         if (queue.Count is 0)
         {
@@ -211,10 +206,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             foreach (var queueItem in queue)
             {
                 var track = queueItem.Track;
-                if (track is null)
-                {
-                    continue;
-                }
+                if (track is null) continue;
 
                 sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
@@ -298,10 +290,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             foreach (var historyItem in history)
             {
                 var track = historyItem.Track;
-                if (track is null)
-                {
-                    continue;
-                }
+                if (track is null) continue;
 
                 sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
@@ -383,7 +372,7 @@ public enum SoundProvider
     [ChoiceName("Deezer")] Deezer,
     [ChoiceName("YouTube")] YouTube,
     [ChoiceName("Spotify")] Spotify,
-    [ChoiceName("Yandex Music")] YandexMusic,
+    [ChoiceName("Yandex Music")] YandexMusic
 }
 
 public enum RepeatMode
