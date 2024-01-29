@@ -16,7 +16,8 @@ builder.Services.AddSingleton<DiscordConfiguration>(opts =>
         Token = token,
         TokenType = TokenType.Bot,
         Intents = DiscordIntents.AllUnprivileged,
-        MinimumLogLevel = LogLevel.Information
+        MinimumLogLevel = LogLevel.Information,
+        LogUnknownEvents = false
     };
 
     return config;
