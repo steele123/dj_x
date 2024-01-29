@@ -72,7 +72,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         try
         {
             var embed = new DiscordEmbedBuilder()
-                .WithDescription("That's a wrap, you've reached the end of the queue bro.\n`/play` to add more songs.")
+                .WithDescription("That's a wrap, you've reached the end of the queue bro.\n\n`/play` to add more songs.")
                 .WithBranding();
 
             var msg = new DiscordMessageBuilder()
