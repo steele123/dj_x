@@ -52,7 +52,7 @@ public class DiscordBot(
 
         switch (id)
         {
-            case "play/pause":
+            case "toggle_playback":
             {
                 if (player.IsPaused)
                 {
@@ -73,6 +73,13 @@ public class DiscordBot(
             case "stop":
             {
                 await player.StopAsync();
+                break;
+            }
+            case "toggle_repeat":
+            {
+                player.RepeatMode = player.RepeatMode == TrackRepeatMode.None
+                    ? TrackRepeatMode.Queue
+                    : TrackRepeatMode.None;
                 break;
             }
         }

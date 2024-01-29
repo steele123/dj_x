@@ -101,9 +101,9 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
             .AddComponents(new DiscordComponent[]
             {
                 new DiscordLinkButtonComponent(track.Uri?.ToString(), "Link"),
-                new DiscordButtonComponent(ButtonStyle.Success, "play/pause", paused ? "Play" : "Pause"),
+                new DiscordButtonComponent(ButtonStyle.Success, "toggle_playback", paused ? "Play" : "Pause"),
                 new DiscordButtonComponent(ButtonStyle.Danger, "skip", "Skip"),
-                new DiscordButtonComponent(ButtonStyle.Secondary, "repeat", repeat ? "Repeat Off" : "Repeat On")
+                new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat", repeat ? "Repeat Off" : "Repeat On")
             });
     }
 }
