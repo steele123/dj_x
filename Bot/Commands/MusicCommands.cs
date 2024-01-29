@@ -109,7 +109,11 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     }
 
     [SlashCommand("skip", "Skips the current song")]
-    public async Task Skip(InteractionContext ctx)
+    public async Task Skip(InteractionContext ctx,
+        [Option("position", "The position to skip from (default: current song, 0)")]
+        int position = 0,
+        [Option("quantity", "The quantity of songs to skip (default: 1)")]
+        int quantity = 1)
     {
         await ctx.DeferAsync(true);
 
@@ -120,8 +124,16 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             return;
         }
 
-        await player.SkipAsync();
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Skipped"));
+        if (position is 0)
+        {
+            await player.SkipAsync(quantity);
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs"));
+            return;
+        }
+        
+        await player.Queue.RemoveRangeAsync(position, quantity);
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs from position {position}"));
     }
 
     [SlashCommand("pause", "Pauses the current song")]
