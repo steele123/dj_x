@@ -92,7 +92,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 .WithTitle(track.Title)
                 .WithUrl(track.Uri)
                 .WithThumbnail(track.ArtworkUri)
-                .AddField("Duration", track.Duration.ToString(), true)
+                .AddField("Duration", track.Duration.ToString("mm\\:ss"), true)
                 .AddField("Author", track.Author, true)
                 .AddField("Paused", paused ? "Yes" : "No", true)
                 .AddField("Repeat", repeat ? "Yes" : "No", true)

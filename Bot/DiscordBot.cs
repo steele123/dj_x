@@ -1,8 +1,11 @@
 using System.Reflection;
 using DSharpPlus;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using Lavalink4NET;
 using Lavalink4NET.Events.Players;
+using Lavalink4NET.Players.Queued;
 
 namespace Bot;
 
@@ -10,7 +13,8 @@ public class DiscordBot(
     ILogger<DiscordBot> logger,
     DiscordClient client,
     IAudioService audioService,
-    IServiceProvider serviceProvider)
+    IServiceProvider serviceProvider,
+    IServiceScopeFactory serviceScopeFactory)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -21,12 +25,59 @@ public class DiscordBot(
         });
 
         commands.RegisterCommands(Assembly.GetExecutingAssembly());
-        
+
+        client.ComponentInteractionCreated += ClientOnComponentInteractionCreated;
+
         audioService.WebSocketClosed += AudioServiceOnWebSocketClosed;
-        
+
         await client.ConnectAsync();
 
         logger.LogInformation("Connected to Discord");
+    }
+
+    private async Task ClientOnComponentInteractionCreated(DiscordClient sender,
+        ComponentInteractionCreateEventArgs args)
+    {
+        var scope = serviceScopeFactory.CreateScope();
+        var commands = scope.ServiceProvider.GetRequiredService<IAudioService>();
+        var id = args.Id!;
+
+        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(args.Guild.Id);
+        if (player is null)
+        {
+            await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("No player found"));
+            return;
+        }
+
+        switch (id)
+        {
+            case "play/pause":
+            {
+                if (player.IsPaused)
+                {
+                    await player.ResumeAsync();
+                }
+                else
+                {
+                    await player.PauseAsync();
+                }
+
+                break;
+            }
+            case "skip":
+            {
+                await player.SkipAsync();
+                break;
+            }
+            case "stop":
+            {
+                await player.StopAsync();
+                break;
+            }
+        }
+
+        await args.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
     }
 
     private async Task AudioServiceOnWebSocketClosed(object sender, WebSocketClosedEventArgs eventargs)
