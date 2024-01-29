@@ -10,7 +10,7 @@ builder.Services.AddHostedService<DiscordBot>();
 builder.Services.AddSingleton<DiscordClient>();
 builder.Services.AddSingleton<DiscordConfiguration>(opts =>
 {
-    var token = builder.Configuration["Discord:Token"];
+    var token = builder.Configuration["DISCORD_TOKEN"];
     var config = new DiscordConfiguration
     {
         Token = token,
@@ -27,10 +27,10 @@ builder.Services.AddLavalink();
 builder.Services.AddLyrics();
 builder.Services.ConfigureLavalink(opts =>
 {
-    var secure = bool.Parse(builder.Configuration["Lavalink:Secure"] ?? "false");
-    var host = builder.Configuration["Lavalink:Host"] ?? throw new InvalidOperationException("Lavalink host not set.");
-    var port = int.Parse(builder.Configuration["Lavalink:Port"] ?? "2233");
-    var password = builder.Configuration["Lavalink:Password"] ??
+    var secure = bool.Parse(builder.Configuration["LAVA_SECURE"] ?? "false");
+    var host = builder.Configuration["LAVA_HOST"] ?? throw new InvalidOperationException("Lavalink host not set.");
+    var port = int.Parse(builder.Configuration["LAVA_PORT"] ?? "2233");
+    var password = builder.Configuration["LAVA_PASS"] ??
                    throw new InvalidOperationException("Lavalink password not set.");
 
     opts.BaseAddress = new Uri($"http{(secure ? "s" : "")}://{host}:{port}");
