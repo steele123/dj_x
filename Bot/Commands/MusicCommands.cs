@@ -214,6 +214,8 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         }
         else
         {
+            var totalDuration = queue.Sum(x => x.Track?.Duration.TotalMilliseconds ?? 0);
+            
             sb.AppendLine("**Queue:**");
             for (var i = 0; i < queue.Count; i++)
             {
@@ -223,6 +225,8 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
                 sb.AppendLine($"{i}. {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
+            
+            sb.AppendLine($"\n**Total Duration:** {TimeSpan.FromMilliseconds(totalDuration).ToString("mm\\:ss")}");
         }
 
         embed.WithDescription(sb.ToString());
