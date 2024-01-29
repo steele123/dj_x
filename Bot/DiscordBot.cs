@@ -42,7 +42,7 @@ public class DiscordBot(
         var commands = scope.ServiceProvider.GetRequiredService<IAudioService>();
         var id = args.Id!;
 
-        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(args.Guild.Id);
+        var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(args.Guild.Id);
         if (player is null)
         {
             await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
@@ -80,6 +80,9 @@ public class DiscordBot(
                 player.RepeatMode = player.RepeatMode == TrackRepeatMode.None
                     ? TrackRepeatMode.Queue
                     : TrackRepeatMode.None;
+
+                await player.TriggerMessageUpdate();
+                
                 break;
             }
         }

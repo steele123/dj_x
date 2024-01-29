@@ -52,6 +52,14 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         await EmbedMessage.ModifyAsync(CreateMessage(CurrentTrack!, RepeatMode != TrackRepeatMode.None, IsPaused));
     }
 
+    /// <summary>
+    /// We use this to trigger an update to the embed message.
+    /// </summary>
+    public async Task TriggerMessageUpdate()
+    {
+        await EmbedMessage!.ModifyAsync(CreateMessage(CurrentTrack!, RepeatMode != TrackRepeatMode.None, IsPaused));
+    }
+
     public override async ValueTask StopAsync(CancellationToken cancellationToken = new())
     {
         await base.StopAsync(cancellationToken);
