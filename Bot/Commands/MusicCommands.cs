@@ -21,7 +21,6 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         if (player is null)
         {
             await ctx.CreateResponseAsync("bot: ✅\nlavalink: ❌");
-
             return;
         }
 
@@ -38,10 +37,10 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     {
         await ctx.DeferAsync(true);
 
-        var opts = new QueuedLavalinkPlayerOptions
+        var opts = new EmbedDisplayPlayerOptions
         {
             SelfDeaf = true,
-            HistoryCapacity = 30,
+            HistoryCapacity = 30
         };
 
         var vc = ctx.Member?.VoiceState?.Channel;
@@ -51,14 +50,35 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             return;
         }
 
-        var player = await audioService.Players.JoinAsync(ctx.Guild.Id, vc.Id, PlayerFactory.Queued, opts);
+        var player = await audioService.Players.JoinAsync<EmbedDisplayPlayer, EmbedDisplayPlayerOptions>(ctx.Guild.Id,
+            vc.Id,
+            CreatePlayerAsync, opts);
+
+        if (player.State != PlayerState.Playing)
+        {
+            var embed = new DiscordEmbedBuilder()
+                .WithDescription("DJ X cookin this one up for you, gimme a sec...")
+                .WithBranding();
+
+            var msg = await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder().WithContent("").AddEmbed(embed));
+
+            if (msg is null)
+            {
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to create embed message."));
+                return;
+            }
+
+            player.EmbedMessage = msg;
+        }
+
         var searchMode = GetTrackSearchMode(provider);
         var track = await audioService.Tracks.LoadTrackAsync(query, searchMode);
 
         if (track is null)
         {
             await ctx.EditResponseAsync(
-                new DiscordWebhookBuilder().WithContent("No tracks found, try a different provider with the command options."));
+                new DiscordWebhookBuilder().WithContent(
+                    "No tracks found, try a different provider with the command options."));
             return;
         }
 
@@ -67,6 +87,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         if (pos is 0)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Playing {track.Title}"));
+            return;
         }
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added {track.Title} to the queue"));
@@ -172,7 +193,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         var embed = new DiscordEmbedBuilder()
             .WithColor(Constants.Color);
-        
+
         var sb = new StringBuilder();
         if (currentTrack is not null)
         {
@@ -193,13 +214,13 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
                 {
                     continue;
                 }
-                
+
                 sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
         }
 
         embed.WithDescription(sb.ToString());
-        embed.AddBotMeta();
+        embed.WithBranding();
         builder.AddEmbed(embed);
 
         await ctx.EditResponseAsync(builder);
@@ -235,9 +256,19 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             .AddEmbed(new DiscordEmbedBuilder()
                 .WithTitle(currentTrack.Title)
                 .WithDescription(lyrics)
-                .AddBotMeta());
+                .WithBranding());
 
         await ctx.EditResponseAsync(builder);
+    }
+
+    private static ValueTask<EmbedDisplayPlayer> CreatePlayerAsync(
+        IPlayerProperties<EmbedDisplayPlayer, EmbedDisplayPlayerOptions> properties,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentNullException.ThrowIfNull(properties);
+
+        return ValueTask.FromResult(new EmbedDisplayPlayer(properties));
     }
 
     private static TrackSearchMode GetTrackSearchMode(SoundProvider provider)

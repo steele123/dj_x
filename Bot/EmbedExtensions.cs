@@ -4,7 +4,7 @@ namespace Bot;
 
 public static class EmbedExtensions
 {
-    public static DiscordEmbed AddBotMeta(this DiscordEmbedBuilder builder)
+    public static DiscordEmbed WithBranding(this DiscordEmbedBuilder builder)
     {
         return builder
             //.WithAuthor(Constants.BotName, url: Constants.ImageUrl)
