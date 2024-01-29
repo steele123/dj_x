@@ -100,6 +100,14 @@ public class DiscordBot(
 
                 break;
             }
+            case "toggle_shuffle":
+            {
+                player.Shuffle = !player.Shuffle;
+
+                await player.TriggerMessageUpdate();
+
+                break;
+            }
         }
 
         await args.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);

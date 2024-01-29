@@ -72,7 +72,8 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         try
         {
             var embed = new DiscordEmbedBuilder()
-                .WithDescription("That's a wrap, you've reached the end of the queue bro.\n\n`/play` to add more songs.")
+                .WithDescription(
+                    "That's a wrap, you've reached the end of the queue bro.\n\n`/play` to add more songs.")
                 .WithBranding();
 
             var msg = new DiscordMessageBuilder()
@@ -87,13 +88,13 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
             return;
         }
 
-
         // Delete message after 10 seconds
+        var cloneMessage = EmbedMessage;
         await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-        await EmbedMessage.DeleteAsync();
+        await cloneMessage.DeleteAsync();
     }
 
-    public static DiscordMessageBuilder CreateMessage(LavalinkTrack track, bool repeat, bool paused)
+    public DiscordMessageBuilder CreateMessage(LavalinkTrack track, bool repeat, bool paused)
     {
         return new DiscordMessageBuilder()
             .WithEmbed(new DiscordEmbedBuilder()
@@ -103,8 +104,9 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 .AddField("Duration", track.Duration.ToString("mm\\:ss"), true)
                 .AddField("Author", track.Author, true)
                 .AddField("Paused", paused ? "Yes" : "No", true)
-                .AddField("Repeat", repeat ? "Yes" : "No")
+                .AddField("Repeat", repeat ? "Yes" : "No", true)
                 .AddField("Source", track.SourceName, true)
+                .AddField("Shuffle Mode", Shuffle ? "On" : "Off", true)
                 .WithBranding()
             )
             .AddComponents(new DiscordComponent[]
@@ -112,7 +114,8 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 new DiscordLinkButtonComponent(track.Uri?.ToString(), "Link"),
                 new DiscordButtonComponent(ButtonStyle.Success, "toggle_playback", paused ? "Play" : "Pause"),
                 new DiscordButtonComponent(ButtonStyle.Danger, "skip", "Skip"),
-                new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat", repeat ? "Repeat Off" : "Repeat On")
+                new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat", repeat ? "Repeat Off" : "Repeat On"),
+                new DiscordButtonComponent(ButtonStyle.Primary, "toggle_shuffle", Shuffle ? "Shuffle Off" : "Shuffle On")
             });
     }
 }

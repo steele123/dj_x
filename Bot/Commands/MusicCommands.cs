@@ -226,6 +226,93 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         await ctx.EditResponseAsync(builder);
     }
 
+    [SlashCommand("repeat", "Sets the repeat mode")]
+    public async Task Repeat(InteractionContext ctx,
+        [Option("mode", "The repeat mode to set")]
+        RepeatMode mode)
+    {
+        await ctx.DeferAsync(true);
+
+        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            return;
+        }
+
+        var newMode = mode switch
+        {
+            RepeatMode.Off => TrackRepeatMode.None,
+            RepeatMode.Track => TrackRepeatMode.Track,
+            RepeatMode.Queue => TrackRepeatMode.Queue,
+            _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+        };
+
+        player.RepeatMode = newMode;
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Repeat mode set to {mode}"));
+    }
+
+    [SlashCommand("shuffle", "Enables or disables shuffle mode")]
+    public async Task Shuffle(InteractionContext ctx)
+    {
+        await ctx.DeferAsync(true);
+
+        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            return;
+        }
+
+        player.Shuffle = !player.Shuffle;
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Shuffle set to " + player.Shuffle));
+    }
+
+    [SlashCommand("history", "Shows the history of the current queue")]
+    public async Task History(InteractionContext ctx)
+    {
+        await ctx.DeferAsync();
+
+        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            return;
+        }
+
+        var history = player.Queue.History;
+        var builder = new DiscordWebhookBuilder();
+
+        var embed = new DiscordEmbedBuilder()
+            .WithColor(Constants.Color);
+
+        var sb = new StringBuilder();
+        if (history?.Count is 0 || history is null)
+        {
+            sb.AppendLine("No tracks in history.");
+        }
+        else
+        {
+            sb.AppendLine("**History:**");
+            foreach (var historyItem in history)
+            {
+                var track = historyItem.Track;
+                if (track is null)
+                {
+                    continue;
+                }
+
+                sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
+            }
+        }
+
+        embed.WithDescription(sb.ToString());
+        embed.WithBranding();
+        builder.AddEmbed(embed);
+
+        await ctx.EditResponseAsync(builder);
+    }
+
     [SlashCommand("lyrics", "Shows the lyrics of the current song")]
     public async Task Lyrics(InteractionContext ctx)
     {
@@ -296,4 +383,11 @@ public enum SoundProvider
     [ChoiceName("YouTube")] YouTube,
     [ChoiceName("Spotify")] Spotify,
     [ChoiceName("Yandex Music")] YandexMusic,
+}
+
+public enum RepeatMode
+{
+    [ChoiceName("Off")] Off,
+    [ChoiceName("Track")] Track,
+    [ChoiceName("Queue")] Queue
 }
