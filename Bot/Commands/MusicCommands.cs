@@ -36,7 +36,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         [Option("bump", "Whether to bump the song to the top of the queue")]
         bool bump = false)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var opts = new QueuedLavalinkPlayerOptions
         {
@@ -58,8 +58,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         if (track is null)
         {
             await ctx.EditResponseAsync(
-                new DiscordWebhookBuilder().WithContent(
-                    "No tracks found, try a different provider with the command options."));
+                new DiscordWebhookBuilder().WithContent("No tracks found, try a different provider with the command options."));
             return;
         }
 
@@ -76,7 +75,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("stop", "Stops the current song")]
     public async Task Stop(InteractionContext ctx)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
@@ -92,7 +91,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("skip", "Skips the current song")]
     public async Task Skip(InteractionContext ctx)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
@@ -108,7 +107,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("pause", "Pauses the current song")]
     public async Task Pause(InteractionContext ctx)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
@@ -124,7 +123,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("resume", "Resumes the current song")]
     public async Task Resume(InteractionContext ctx)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
@@ -142,7 +141,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         [Option("volume", "The volume to set")]
         long volume)
     {
-        await ctx.DeferAsync();
+        await ctx.DeferAsync(true);
 
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
@@ -236,7 +235,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             .AddEmbed(new DiscordEmbedBuilder()
                 .WithTitle(currentTrack.Title)
                 .WithDescription(lyrics)
-                .WithColor(Constants.Color));
+                .AddBotMeta());
 
         await ctx.EditResponseAsync(builder);
     }
