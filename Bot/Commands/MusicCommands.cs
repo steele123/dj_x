@@ -91,6 +91,34 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added {track.Title} to the queue"));
     }
+    
+    [SlashCommand("nowplaying", "Shows the current song")]
+    public async Task NowPlaying(InteractionContext ctx)
+    {
+        await ctx.DeferAsync();
+
+        var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            return;
+        }
+        
+        var currentTrack = player.CurrentTrack;
+        if (currentTrack is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No track playing."));
+            return;
+        }
+
+        var embed = new DiscordEmbedBuilder()
+            .WithTitle(currentTrack.Title)
+            .WithDescription(currentTrack.Author)
+            .WithThumbnail(currentTrack.ArtworkUri)
+            .WithBranding();
+
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
+    }
 
     [SlashCommand("stop", "Stops the current song")]
     public async Task Stop(InteractionContext ctx)
