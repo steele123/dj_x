@@ -103,7 +103,8 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 .AddField("Duration", track.Duration.ToString("mm\\:ss"), true)
                 .AddField("Author", track.Author, true)
                 .AddField("Paused", paused ? "Yes" : "No", true)
-                .AddField("Repeat", repeat ? "Yes" : "No", true)
+                .AddField("Repeat", repeat ? "Yes" : "No")
+                .AddField("Source", track.SourceName, true)
                 .WithBranding()
             )
             .AddComponents(new DiscordComponent[]
