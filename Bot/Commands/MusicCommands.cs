@@ -83,11 +83,13 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
                         "No tracks found, try a different provider with the command options."));
                 return;
             }
-
+            
+            var firstTrack = tracks.Tracks.Take(1).First();
             var queueItems = tracks.Tracks.Select(x => new TrackQueueItem(new TrackReference(x))).ToList();
             await player.Queue.AddRangeAsync(queueItems);
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
-                $"Added {tracks.Count} tracks to the queue from playlist {tracks.Playlist!.Name}"));
+                $"Added {tracks.Count + 1} tracks to the queue from playlist {tracks.Playlist!.Name}"));
+            await player.PlayAsync(firstTrack, false);
             return;
         }
 

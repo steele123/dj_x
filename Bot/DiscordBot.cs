@@ -38,9 +38,9 @@ public class DiscordBot(
     private async Task ClientOnComponentInteractionCreated(DiscordClient sender,
         ComponentInteractionCreateEventArgs args)
     {
-        //var scope = serviceScopeFactory.CreateScope();
+        // var scope = serviceScopeFactory.CreateScope();
         var id = args.Id!;
-
+        
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(args.Guild.Id);
         if (player is null)
         {
