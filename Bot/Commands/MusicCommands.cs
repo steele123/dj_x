@@ -412,6 +412,8 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             return;
         }
 
+        // Remove the first line, it's the title
+        lyrics = lyrics[(lyrics.IndexOf('\n') + 1)..];
         var builder = new DiscordWebhookBuilder()
             .AddEmbed(new DiscordEmbedBuilder()
                 .WithTitle(currentTrack.Title)
