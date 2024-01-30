@@ -93,7 +93,6 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             return;
         }
 
-
         var track = await audioService.Tracks.LoadTrackAsync(query, searchMode);
         if (track is null)
         {
@@ -141,6 +140,76 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             .WithBranding();
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
+    }
+
+    [SlashCommand("fill", "Fills the queue with a preset playlist")]
+    public async Task Fill(InteractionContext ctx,
+        [Option("playlist", "The playlist to fill the queue with")]
+        PresetPlaylists playlist)
+    {
+        await ctx.DeferAsync(true);
+
+        var opts = new EmbedDisplayPlayerOptions
+        {
+            SelfDeaf = true,
+            HistoryCapacity = 30,
+            DisconnectOnDestroy = true,
+            ClearQueueOnStop = true
+        };
+
+        var vc = ctx.Member?.VoiceState?.Channel;
+        if (vc is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You must be in a voice channel."));
+            return;
+        }
+
+        var player = await audioService.Players.JoinAsync<EmbedDisplayPlayer, EmbedDisplayPlayerOptions>(ctx.Guild.Id,
+            vc.Id,
+            CreatePlayerAsync, opts);
+
+        if (player.State != PlayerState.Playing)
+        {
+            var embed = new DiscordEmbedBuilder()
+                .WithDescription("DJ X is cookin that shit up for ya, gimme a sec")
+                .WithBranding();
+
+            var msg = await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder().WithContent("").AddEmbed(embed));
+
+            if (msg is null)
+            {
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to create embed message."));
+                return;
+            }
+
+            player.EmbedMessage = msg;
+        }
+
+        var playlistUrl = playlist switch
+        {
+            PresetPlaylists.Rap => "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd?si=32f6cef96dbb49fa",
+            PresetPlaylists.Indie => "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL?si=ef0c982971c445ae",
+            PresetPlaylists.Pop => "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M?si=15a3cbd2ca994b79",
+            PresetPlaylists.Dance => "https://open.spotify.com/playlist/37i9dQZF1DX4dyzvuaRJ0n?si=2e77a916ab5446b2",
+            PresetPlaylists.LoFi => "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn?si=1cf892cf35d440fc",
+            _ => throw new ArgumentOutOfRangeException(nameof(playlist), playlist, null)
+        };
+
+        var tracks = await audioService.Tracks.LoadTracksAsync(playlistUrl, TrackSearchMode.Spotify);
+        if (tracks.Count is 0)
+        {
+            await ctx.EditResponseAsync(
+                new DiscordWebhookBuilder().WithContent(
+                    "No tracks found, try a different provider with the command options."));
+            return;
+        }
+
+        var firstTrack = tracks.Tracks.Take(1).First();
+        var queueItems = tracks.Tracks.Select(x => new TrackQueueItem(new TrackReference(x))).ToList();
+        await player.Queue.AddRangeAsync(queueItems);
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
+            $"Added {tracks.Count + 1} tracks to the queue from playlist {tracks.Playlist!.Name}"));
+        await player.PlayAsync(firstTrack, false);
     }
 
     [SlashCommand("stop", "Stops the current song")]
@@ -475,4 +544,13 @@ public enum RepeatMode
     [ChoiceName("Off")] Off,
     [ChoiceName("Track")] Track,
     [ChoiceName("Queue")] Queue
+}
+
+public enum PresetPlaylists
+{
+    Rap,
+    Indie,
+    Pop,
+    Dance,
+    LoFi
 }

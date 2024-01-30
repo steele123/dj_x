@@ -1,6 +1,9 @@
 using Bot;
 using DSharpPlus;
 using Lavalink4NET.Extensions;
+using Lavalink4NET.InactivityTracking;
+using Lavalink4NET.InactivityTracking.Extensions;
+using Lavalink4NET.InactivityTracking.Trackers.Idle;
 using Lavalink4NET.Lyrics.Extensions;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -25,6 +28,11 @@ builder.Services.AddSingleton<DiscordConfiguration>(opts =>
 
 builder.Services.AddLavalink();
 builder.Services.AddLyrics();
+builder.Services.ConfigureInactivityTracking(cfg =>
+{
+    cfg.DefaultTimeout = TimeSpan.FromMinutes(5);
+});
+
 builder.Services.ConfigureLavalink(opts =>
 {
     var secure = bool.Parse(builder.Configuration["LAVA_SECURE"] ?? "false");
