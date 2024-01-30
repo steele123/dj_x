@@ -56,7 +56,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         if (player.State != PlayerState.Playing)
         {
             var embed = new DiscordEmbedBuilder()
-                .WithDescription("DJ X cookin this one up for you, gimme a sec...")
+                .WithDescription("DJ X is loading your song...")
                 .WithBranding();
 
             var msg = await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder().WithContent("").AddEmbed(embed));
