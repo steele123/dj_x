@@ -446,6 +446,29 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         await ctx.EditResponseAsync(builder);
     }
+    
+    [SlashCommand("bump", "Bumps the message to the top of the channel")]
+    public async Task Bump(InteractionContext ctx)
+    {
+        await ctx.DeferAsync();
+
+        var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
+        }
+
+        if (player?.EmbedMessage is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No embed message found."));
+            return;
+        }
+
+        // Delete the message then send it again
+        await player.EmbedMessage.DeleteAsync();
+        player.EmbedMessage = await ctx.Channel.SendMessageAsync(player.EmbedMessage.Content, player.EmbedMessage.Embeds[0]);
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Bumped the message."));
+    }
 
     [SlashCommand("clear", "Clears the queue")]
     public async Task Clear(InteractionContext ctx)
