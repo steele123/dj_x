@@ -142,16 +142,16 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         await cloneMessage.DeleteAsync();
     }
 
-    public async ValueTask NotifyPlayerActiveAsync(PlayerTrackingState trackingState,
+    public ValueTask NotifyPlayerActiveAsync(PlayerTrackingState trackingState,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        return;
+        return ValueTask.CompletedTask;
     }
 
-    public async ValueTask NotifyPlayerTrackedAsync(PlayerTrackingState trackingState,
+    public ValueTask NotifyPlayerTrackedAsync(PlayerTrackingState trackingState,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        return;
+        return ValueTask.CompletedTask;
     }
 }
 
