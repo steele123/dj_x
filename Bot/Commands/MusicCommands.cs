@@ -269,6 +269,13 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             sb.AppendLine("**Queue:**");
             for (var i = 0; i < queue.Count; i++)
             {
+                // After 20 tracks show a truncated message of the remaining tracks
+                if (i is 20)
+                {
+                    sb.AppendLine($"... {queue.Count - i} more tracks");
+                    break;
+                }
+                
                 var queueItem = queue[i];
                 var track = queueItem.Track;
                 if (track is null) continue;
