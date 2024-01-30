@@ -466,7 +466,8 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         // Delete the message then send it again
         await player.EmbedMessage.DeleteAsync();
-        player.EmbedMessage = await ctx.Channel.SendMessageAsync(player.EmbedMessage.Content, player.EmbedMessage.Embeds[0]);
+        var msg = await ctx.Channel.SendMessageAsync(player.CreateMessage(player.CurrentTrack!));
+        player.EmbedMessage = msg;
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Bumped the message."));
     }
 

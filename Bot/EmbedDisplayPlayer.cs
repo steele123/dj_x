@@ -22,7 +22,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
 
         if (EmbedMessage is null) return;
 
-        await EmbedMessage.ModifyAsync(CreateMessage(queueItem.Track!, RepeatMode != TrackRepeatMode.None, IsPaused));
+        await EmbedMessage.ModifyAsync(CreateMessage(queueItem.Track!));
     }
 
     public override async ValueTask PauseAsync(CancellationToken cancellationToken = new())
@@ -48,7 +48,7 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
     /// </summary>
     public async Task TriggerMessageUpdate()
     {
-        await EmbedMessage!.ModifyAsync(CreateMessage(CurrentTrack!, RepeatMode != TrackRepeatMode.None, IsPaused));
+        await EmbedMessage!.ModifyAsync(CreateMessage(CurrentTrack!));
     }
 
     public override async ValueTask StopAsync(CancellationToken cancellationToken = new())
@@ -82,8 +82,11 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
         await cloneMessage.DeleteAsync();
     }
 
-    public DiscordMessageBuilder CreateMessage(LavalinkTrack track, bool repeat, bool paused)
+    public DiscordMessageBuilder CreateMessage(LavalinkTrack track)
     {
+        var isRepeat = RepeatMode != TrackRepeatMode.None;
+        var isPaused = IsPaused;
+
         return new DiscordMessageBuilder()
             .WithEmbed(new DiscordEmbedBuilder()
                 .WithTitle(track.Title)
@@ -91,16 +94,17 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                 .WithThumbnail(track.ArtworkUri)
                 .AddField("Duration", track.Duration.ToString("mm\\:ss"), true)
                 .AddField("Author", track.Author, true)
-                .AddField("Paused", paused ? "Yes" : "No", true)
-                .AddField("Repeat", repeat ? "Yes" : "No", true)
+                .AddField("Paused", isPaused ? "Yes" : "No", true)
+                .AddField("Repeat", isRepeat ? "Yes" : "No", true)
                 .AddField("Source", track.SourceName, true)
                 .AddField("Shuffle Mode", Shuffle ? "On" : "Off", true)
                 .WithBranding()
             )
             .AddComponents(new DiscordLinkButtonComponent(track.Uri?.ToString(), "Link"),
-                new DiscordButtonComponent(ButtonStyle.Success, "toggle_playback", paused ? "Play" : "Pause"),
+                new DiscordButtonComponent(ButtonStyle.Success, "toggle_playback", isPaused ? "Play" : "Pause"),
                 new DiscordButtonComponent(ButtonStyle.Danger, "skip", "Skip"),
-                new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat", repeat ? "Repeat Off" : "Repeat On"),
+                new DiscordButtonComponent(ButtonStyle.Secondary, "toggle_repeat",
+                    isRepeat ? "Repeat Off" : "Repeat On"),
                 new DiscordButtonComponent(ButtonStyle.Primary, "toggle_shuffle",
                     Shuffle ? "Shuffle Off" : "Shuffle On"));
     }
