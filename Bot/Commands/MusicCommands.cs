@@ -56,7 +56,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         if (player.State != PlayerState.Playing)
         {
             var embed = new DiscordEmbedBuilder()
-                .WithDescription("DJ X is loading your song...")
+                .WithDescription("DJ X is cookin that shit up for ya, gimme a sec")
                 .WithBranding();
 
             var msg = await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder().WithContent("").AddEmbed(embed));
@@ -71,8 +71,29 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         }
 
         var searchMode = GetTrackSearchMode(provider);
-        var track = await audioService.Tracks.LoadTrackAsync(query, searchMode);
 
+        // check if the query is a URL with playlist in it
+        var isPlaylist = query.Contains("playlist") && Uri.TryCreate(query, UriKind.Absolute, out var uri);
+        if (isPlaylist)
+        {
+            var tracks = await audioService.Tracks.LoadTracksAsync(query, searchMode);
+            if (tracks.Count is 0)
+            {
+                await ctx.EditResponseAsync(
+                    new DiscordWebhookBuilder().WithContent(
+                        "No tracks found, try a different provider with the command options."));
+                return;
+            }
+
+            var queueItems = tracks.Tracks.Select(x => new TrackQueueItem(new TrackReference(x))).ToList();
+            await player.Queue.AddRangeAsync(queueItems);
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
+                $"Added {tracks.Count} tracks to the queue from playlist {tracks.Playlist!.Name}"));
+            return;
+        }
+
+
+        var track = await audioService.Tracks.LoadTrackAsync(query, searchMode);
         if (track is null)
         {
             await ctx.EditResponseAsync(
@@ -91,7 +112,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added {track.Title} to the queue"));
     }
-    
+
     [SlashCommand("nowplaying", "Shows the current song")]
     public async Task NowPlaying(InteractionContext ctx)
     {
@@ -103,7 +124,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
             return;
         }
-        
+
         var currentTrack = player.CurrentTrack;
         if (currentTrack is null)
         {
@@ -158,7 +179,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs"));
             return;
         }
-        
+
         await player.Queue.RemoveRangeAsync(position, quantity);
         await ctx.EditResponseAsync(
             new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs from position {position}"));
@@ -199,7 +220,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("volume", "Sets the volume")]
     public async Task Volume(InteractionContext ctx,
         [Option("volume", "The volume to set")]
-        long volume)
+        float volume)
     {
         await ctx.DeferAsync(true);
 
@@ -243,7 +264,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         else
         {
             var totalDuration = queue.Sum(x => x.Track?.Duration.TotalMilliseconds ?? 0);
-            
+
             sb.AppendLine("**Queue:**");
             for (var i = 0; i < queue.Count; i++)
             {
@@ -253,7 +274,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
                 sb.AppendLine($"{i}. {track.Title} - {track.Author} `[via {track.SourceName}]`");
             }
-            
+
             sb.AppendLine($"\n**Total Duration:** {TimeSpan.FromMilliseconds(totalDuration).ToString("mm\\:ss")}");
         }
 
