@@ -72,8 +72,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         var searchMode = GetTrackSearchMode(provider);
 
-        // check if the query is a URL with playlist in it
-        var isPlaylist = query.Contains("playlist") && Uri.TryCreate(query, UriKind.Absolute, out var uri);
+        var isPlaylist = query.Contains("playlist");
         if (isPlaylist)
         {
             var tracks = await audioService.Tracks.LoadTracksAsync(query, searchMode);
@@ -160,9 +159,9 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("skip", "Skips the current song")]
     public async Task Skip(InteractionContext ctx,
         [Option("position", "The position to skip from (default: current song, 0)")]
-        int position = 0,
+        long position = 0,
         [Option("quantity", "The quantity of songs to skip (default: 1)")]
-        int quantity = 1)
+        long quantity = 1)
     {
         await ctx.DeferAsync(true);
 
@@ -175,12 +174,12 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         if (position is 0)
         {
-            await player.SkipAsync(quantity);
+            await player.SkipAsync((int) quantity);
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs"));
             return;
         }
 
-        await player.Queue.RemoveRangeAsync(position, quantity);
+        await player.Queue.RemoveRangeAsync((int) position, (int) quantity);
         await ctx.EditResponseAsync(
             new DiscordWebhookBuilder().WithContent($"Skipped {quantity} songs from position {position}"));
     }
@@ -220,7 +219,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
     [SlashCommand("volume", "Sets the volume")]
     public async Task Volume(InteractionContext ctx,
         [Option("volume", "The volume to set")]
-        float volume)
+        double volume)
     {
         await ctx.DeferAsync(true);
 
@@ -231,7 +230,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             return;
         }
 
-        await player.SetVolumeAsync(volume);
+        await player.SetVolumeAsync((float) volume);
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Volume set to {volume}"));
     }
 
