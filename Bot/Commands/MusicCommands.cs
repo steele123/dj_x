@@ -122,7 +122,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -150,7 +150,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -170,7 +170,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -194,7 +194,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -210,7 +210,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -228,7 +228,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -244,7 +244,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -303,7 +303,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<EmbedDisplayPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -327,7 +327,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -343,7 +343,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -385,7 +385,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
@@ -401,7 +401,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
         if (player is null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("DJ X isn't playing anything."));
             return;
         }
 
