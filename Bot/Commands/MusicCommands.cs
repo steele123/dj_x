@@ -368,6 +368,22 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         await ctx.EditResponseAsync(builder);
     }
 
+    [SlashCommand("clear", "Clears the queue")]
+    public async Task Clear(InteractionContext ctx)
+    {
+        await ctx.DeferAsync(true);
+
+        var player = await audioService.Players.GetPlayerAsync<QueuedLavalinkPlayer>(ctx.Guild.Id);
+        if (player is null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No player found."));
+            return;
+        }
+
+        await player.Queue.ClearAsync();
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Cleared the queue"));
+    }
+
     [SlashCommand("lyrics", "Shows the lyrics of the current song")]
     public async Task Lyrics(InteractionContext ctx)
     {
