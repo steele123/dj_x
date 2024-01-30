@@ -83,7 +83,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
                         "No tracks found, try a different provider with the command options."));
                 return;
             }
-            
+
             var firstTrack = tracks.Tracks.Take(1).First();
             var queueItems = tracks.Tracks.Select(x => new TrackQueueItem(new TrackReference(x))).ToList();
             await player.Queue.AddRangeAsync(queueItems);
@@ -444,6 +444,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
             SoundProvider.AppleMusic => TrackSearchMode.AppleMusic,
             SoundProvider.Deezer => TrackSearchMode.Deezer,
             SoundProvider.YandexMusic => TrackSearchMode.YandexMusic,
+            SoundProvider.Plain => TrackSearchMode.None,
             _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
         };
     }
@@ -457,7 +458,8 @@ public enum SoundProvider
     [ChoiceName("Deezer")] Deezer,
     [ChoiceName("YouTube")] YouTube,
     [ChoiceName("Spotify")] Spotify,
-    [ChoiceName("Yandex Music")] YandexMusic
+    [ChoiceName("Yandex Music")] YandexMusic,
+    [ChoiceName("Plain")] Plain
 }
 
 public enum RepeatMode
