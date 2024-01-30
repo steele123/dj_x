@@ -110,8 +110,9 @@ public class DiscordBot(
         await args.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
     }
 
-    private async Task AudioServiceOnWebSocketClosed(object sender, WebSocketClosedEventArgs eventargs)
+    private Task AudioServiceOnWebSocketClosed(object sender, WebSocketClosedEventArgs eventargs)
     {
         logger.LogInformation("Socket Closed - Code: {Code}, Reason: {Reason}", eventargs.CloseCode, eventargs.Reason);
+        return Task.CompletedTask;
     }
 }
