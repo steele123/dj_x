@@ -11,7 +11,7 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<DiscordBot>();
 builder.Services.AddSingleton<DiscordClient>();
-builder.Services.AddSingleton<DiscordConfiguration>(opts =>
+builder.Services.AddSingleton<DiscordConfiguration>(_ =>
 {
     var token = builder.Configuration["DISCORD_TOKEN"];
     var config = new DiscordConfiguration

@@ -37,7 +37,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var opts = new EmbedDisplayPlayerOptions
         {
             SelfDeaf = true,
-            HistoryCapacity = 30,
+            HistoryCapacity = 20,
             DisconnectOnDestroy = true,
             ClearQueueOnStop = true
         };
@@ -430,8 +430,8 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         }
         else
         {
-            sb.AppendLine("**History:**");
-            foreach (var historyItem in history)
+            sb.AppendLine("**Last 20 Songs** (most recent first):");
+            foreach (var historyItem in history.Reverse())
             {
                 var track = historyItem.Track;
                 if (track is null) continue;
