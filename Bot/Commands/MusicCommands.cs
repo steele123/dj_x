@@ -136,6 +136,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         var embed = new DiscordEmbedBuilder()
             .WithTitle(currentTrack.Title)
             .WithDescription(currentTrack.Author)
+            .WithUrl(currentTrack.Uri)
             .WithThumbnail(currentTrack.ArtworkUri)
             .WithBranding();
 
