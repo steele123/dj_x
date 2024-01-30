@@ -276,12 +276,12 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
                     sb.AppendLine($"... {queue.Count - i} more tracks");
                     break;
                 }
-                
+
                 var queueItem = queue[i];
                 var track = queueItem.Track;
                 if (track is null) continue;
 
-                sb.AppendLine($"{i}. {track.Title} - {track.Author} `[via {track.SourceName}]`");
+                sb.AppendLine($"{i}. [{track.Title}]({track.Uri}) - {track.Author} `[src: {track.SourceName}]`");
             }
 
             sb.AppendLine($"\n**Total Duration:** {TimeSpan.FromMilliseconds(totalDuration).ToString("mm\\:ss")}");
@@ -367,7 +367,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
                 var track = historyItem.Track;
                 if (track is null) continue;
 
-                sb.AppendLine($"- {track.Title} - {track.Author} `[via {track.SourceName}]`");
+                sb.AppendLine($"- [{track.Title}]({track.Uri}) - {track.Author} `[via {track.SourceName}]`");
             }
         }
 
