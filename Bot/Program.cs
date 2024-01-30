@@ -4,6 +4,7 @@ using Lavalink4NET.Extensions;
 using Lavalink4NET.InactivityTracking;
 using Lavalink4NET.InactivityTracking.Extensions;
 using Lavalink4NET.InactivityTracking.Trackers.Idle;
+using Lavalink4NET.InactivityTracking.Trackers.Users;
 using Lavalink4NET.Lyrics.Extensions;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -28,9 +29,11 @@ builder.Services.AddSingleton<DiscordConfiguration>(_ =>
 
 builder.Services.AddLavalink();
 builder.Services.AddLyrics();
+builder.Services.AddInactivityTracking();
+
 builder.Services.ConfigureInactivityTracking(cfg =>
 {
-    cfg.DefaultTimeout = TimeSpan.FromMinutes(5);
+    cfg.DefaultTimeout = TimeSpan.FromSeconds(10);
 });
 
 builder.Services.ConfigureLavalink(opts =>

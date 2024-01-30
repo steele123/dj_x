@@ -1,6 +1,9 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
+using Lavalink4NET.InactivityTracking;
+using Lavalink4NET.InactivityTracking.Players;
+using Lavalink4NET.InactivityTracking.Trackers;
 using Lavalink4NET.Players;
 using Lavalink4NET.Players.Queued;
 using Lavalink4NET.Tracks;
@@ -11,7 +14,7 @@ namespace Bot;
 ///     Plays songs and sends an embed to the specified text channel.
 /// </summary>
 public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDisplayPlayerOptions> properties)
-    : QueuedLavalinkPlayer(properties)
+    : QueuedLavalinkPlayer(properties), IInactivityPlayerListener
 {
     public DiscordMessage? EmbedMessage { get; set; }
 
@@ -107,6 +110,48 @@ public class EmbedDisplayPlayer(IPlayerProperties<EmbedDisplayPlayer, EmbedDispl
                     isRepeat ? "Repeat Off" : "Repeat On"),
                 new DiscordButtonComponent(ButtonStyle.Primary, "toggle_shuffle",
                     Shuffle ? "Shuffle Off" : "Shuffle On"));
+    }
+
+    public async ValueTask NotifyPlayerInactiveAsync(PlayerTrackingState trackingState,
+        CancellationToken cancellationToken = new CancellationToken())
+    {
+        if (EmbedMessage is null) return;
+
+        try
+        {
+            var embed = new DiscordEmbedBuilder()
+                .WithDescription(
+                    "DJ X noticed you've been inactive for 10 seconds, so I've stopped the music.\n\n`/play` to add more songs.")
+                .WithBranding();
+
+            var msg = new DiscordMessageBuilder()
+                .AddEmbed(embed);
+
+            await EmbedMessage.ModifyAsync(msg);
+        }
+        catch (NotFoundException)
+        {
+            // Message was deleted..
+            EmbedMessage = null;
+            return;
+        }
+
+        // Delete message after 10 seconds
+        var cloneMessage = EmbedMessage;
+        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+        await cloneMessage.DeleteAsync();
+    }
+
+    public async ValueTask NotifyPlayerActiveAsync(PlayerTrackingState trackingState,
+        CancellationToken cancellationToken = new CancellationToken())
+    {
+        return;
+    }
+
+    public async ValueTask NotifyPlayerTrackedAsync(PlayerTrackingState trackingState,
+        CancellationToken cancellationToken = new CancellationToken())
+    {
+        return;
     }
 }
 
