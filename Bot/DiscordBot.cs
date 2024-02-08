@@ -32,6 +32,8 @@ public class DiscordBot(
 
         await client.ConnectAsync();
 
+        await audioService.WaitForReadyAsync(stoppingToken);
+
         logger.LogInformation("Connected to Discord");
     }
 
