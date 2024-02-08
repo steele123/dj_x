@@ -34,7 +34,7 @@ public class DiscordBot(
 
         await audioService.WaitForReadyAsync(stoppingToken);
 
-        logger.LogInformation("Connected to Discord");
+        logger.LogInformation("Connected to Discord and Lavalink");
     }
 
     private async Task ClientOnComponentInteractionCreated(DiscordClient sender,
