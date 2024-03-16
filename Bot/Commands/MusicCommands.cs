@@ -32,6 +32,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
         [Option("bump", "Whether to bump the song to the top of the queue")]
         bool bump = false)
     {
+        logger.LogInformation("Playing {Query} from {Provider}", query, provider);
         await ctx.DeferAsync(true);
 
         var opts = new EmbedDisplayPlayerOptions
@@ -446,7 +447,7 @@ public class MusicCommands(IAudioService audioService, ILogger<MusicCommands> lo
 
         await ctx.EditResponseAsync(builder);
     }
-    
+
     [SlashCommand("bump", "Bumps the message to the top of the channel")]
     public async Task Bump(InteractionContext ctx)
     {
